@@ -1,99 +1,38 @@
-let itens = [];
-let total = 0;
+import { PedidoController } from './src/controllers/PedidoController.js';
+import { ConsoleView } from './src/views/ConsoleView.js';
+import { DescontoPercentual } from './src/services/DescontoStrategy.js';
 
-function adicionar() {
-  let produto = document.getElementById("produto").value;
-  let qtd = document.getElementById("qtd").value;
+async function rodarSistema() {
+  console.log("Iniciando fluxo controlado do sistema...");
+  
+  // Instancia Controladora e Visão
+  const controller = new PedidoController();
+  const tela = new ConsoleView();
 
-  if (qtd == "" || qtd <= 0) {
-    alert("Quantidade inválida");
+  // Registra a View para observar as atualizações do Controller (Observer Pattern)
+  controller.subscribe(tela);
+
+  // 1. Simula Adição de Itens (Interface atualiza automaticamente a cada chamada)
+  controller.adicionarProduto("1", "Hambúrguer Artesanal", 29.90, 2);
+  controller.adicionarProduto("2", "Batata Frita", 12.00, 1);
+  
+  // 2. Aplicando Desconto de 10% (Strategy Pattern)
+  controller.definirDesconto(new DescontoPercentual(10));
+
+  // 3. Removendo um item
+  controller.removerProduto("2");
+
+  // 4. Finalizando o pedido (Envia para API Fake e gera links WhatsApp)
+  try {
+    console.log("\n[Enviando dados para o Servidor e Gerando Comunicação...]");
+    const resultado = await controller.finalizarPedido("5588988888888");
+    
+    console.log("\nPedido persistido com sucesso no JSON Server!");
+    console.log("Link para o Estabelecimento:", resultado.linksWa.linkEstabelecimento);
+    console.log("Link para o Cliente:", resultado.linksWa.linkCliente);
+  } catch (error) {
+    console.error("Erro ao finalizar:", error.message);
   }
-
-  let preco = 0;
-
-  if (produto == "pastel") preco = 5;
-  if (produto == "caldo") preco = 7;
-  if (produto == "refrigerante") preco = 4;
-  if (produto == "suco") preco = 6;
-
-  let subtotal = preco * qtd;
-
-  itens.push({
-    produto: produto,
-    qtd: qtd,
-    subtotal: subtotal
-  });
-
-  atualizarLista();
 }
 
-function atualizarLista() {
-  let lista = document.getElementById("lista");
-  lista.innerHTML = "";
-
-  total = 0;
-
-  for (let i = 0; i < itens.length; i++) {
-    let item = itens[i];
-
-    let li = document.createElement("li");
-    li.innerHTML = item.produto + " | Qtd: " + item.qtd + " | R$ " + item.subtotal;
-
-    lista.appendChild(li);
-
-    total = total + item.subtotal;
-  }
-
-  document.getElementById("total").innerText = total;
-
-  salvarTotal();
-}
-
-function salvarTotal() {
-  // duplicação de responsabilidade
-  localStorage.setItem("total", total);
-}
-
-function finalizar() {
-  let desconto = 0;
-
-  if (total > 100) {
-    desconto = total * 0.2;
-  } else if (total > 50) {
-    desconto = total * 0.1;
-  }
-
-  let taxa = total * 0.05;
-
-  let totalFinal = total - desconto + taxa;
-
-  alert("Total final: " + totalFinal);
-
-  localStorage.setItem("ultimoPedido", totalFinal);
-
-  limparTudo();
-}
-
-function limparTudo() {
-  itens = [];
-  total = 0;
-
-  document.getElementById("lista").innerHTML = "";
-  document.getElementById("total").innerText = 0;
-}
-
-function removerUltimo() {
-  itens.pop();
-  atualizarLista();
-}
-
-// função duplicada de cálculo (problema proposital)
-function calcularTotal() {
-  let soma = 0;
-
-  for (let i = 0; i < itens.length; i++) {
-    soma += itens[i].subtotal;
-  }
-
-  return soma;
-}
+rodarSistema();

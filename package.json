@@ -1,0 +1,29 @@
+{
+  "name": "sistema-pedidos-eng-reversa",
+  "version": "1.0.0",
+  "description": "Arquitetura de Sistemas   **Professor:** Dr. Renato William Rodrigues de Souza   **Curso:** Análise e Desenvolvimento de Sistemas   **Instituição:** IFCE - Campus Boa Viagem",
+  "main": "script.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+  "api": "json-server --watch db.json --port 3000",
+  "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucras22/sistema-pedidos-eng-reversa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lucras22/sistema-pedidos-eng-reversa/issues"
+  },
+  "homepage": "https://github.com/Lucras22/sistema-pedidos-eng-reversa#readme",
+  "type": "module",
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "json-server": "^1.0.0-beta.15"
+  }
+}
