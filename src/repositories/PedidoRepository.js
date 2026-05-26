@@ -3,15 +3,16 @@ export class PedidoRepository {
     this.apiUrl = 'http://localhost:3000/pedidos';
   }
 
-  async salvar(pedido, strategyDesconto = null) {
+  async salvarPedido(pedido, total) {
     const payload = {
-      id: pedido.id || Date.now().toString(),
+      id: Date.now().toString(),
       itens: pedido.itens.map(i => ({
         produto: { id: i.produto.id, nome: i.produto.nome, preco: i.produto.preco },
         quantidade: i.quantidade
       })),
-      total: pedido.calcularTotal(strategyDesconto),
-      status: pedido.status
+      total: total,
+      status: pedido.status,
+      dataCriacao: new Date().toISOString()
     };
 
     const response = await fetch(this.apiUrl, {
@@ -19,12 +20,6 @@ export class PedidoRepository {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
-    return await response.json();
-  }
-
-  async listarTodos() {
-    const response = await fetch(this.apiUrl);
     return await response.json();
   }
 }
